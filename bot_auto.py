@@ -87,7 +87,7 @@ async def main():
                 # Step 2: Click button
                 for msg in msgs:
                     if msg.buttons and not clicked:
-                        print("🟢 Clicking Get Prediction button")
+                        print("🟢 Clicking 🔮 Get Prediction button")
                         await msg.click(0)
                         clicked = True
                         break
