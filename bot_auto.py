@@ -69,12 +69,12 @@ async def main():
                     print("⏭ Already sent this minute")
                     continue
 
-                last_sent_minute[bot] = current_minute
-
                 await client.send_message(bot, "Get Prediction")
                 print("📩 Sent (once)")
 
-                await asyncio.sleep(3)
+                last_sent_minute[bot] = current_minute
+
+                await asyncio.sleep(5)
 
                 msgs = await client.get_messages(bot, limit=5)
 
@@ -97,10 +97,20 @@ async def main():
             except Exception as e:
                 print("❌ Error:", e)
 
+                # 🔥 session duplicate error fix
+                if "AuthKeyDuplicatedError" in str(e):
+                    print("⚠ Session error — restarting main loop...")
+                    return
+
         print("⏳ Next round...\n")
         await wait_next_minute()
 
 
 # ===== RUN =====
-with client:
-    client.loop.run_until_complete(main())
+while True:
+    try:
+        with client:
+            client.loop.run_until_complete(main())
+    except Exception as e:
+        print("🔄 Restarting script...", e)
+        continue
