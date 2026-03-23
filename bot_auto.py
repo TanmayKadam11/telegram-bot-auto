@@ -2,6 +2,7 @@ from telethon import TelegramClient
 import asyncio
 import re
 from datetime import datetime
+last_sent_minute = {}
 last_period = {}
 
 # ===== API =====
@@ -61,9 +62,17 @@ async def main():
                 if not client.is_connected():
                     await client.connect()
 
-                # send only once
-                await client.send_message(bot, "🔮 Get Prediction")
-                print("📩 Sent")
+                current_minute = datetime.now().strftime("%Y%m%d%H%M")
+
+                # 🔒 duplicate send रोकना
+                if bot in last_sent_minute and last_sent_minute[bot] == current_minute:
+                    print("⏭ Already sent this minute")
+                    continue
+
+                last_sent_minute[bot] = current_minute
+
+                await client.send_message(bot, "Get Prediction")
+                print("📩 Sent (once)")
 
                 await asyncio.sleep(3)
 
@@ -75,8 +84,9 @@ async def main():
 
                         if period and purchase:
 
-                            # 🔥 skip old data
+                            # 🔒 duplicate result रोकना
                             if bot in last_period and last_period[bot] == period:
+                                print("⏭ Same period skip")
                                 continue
 
                             last_period[bot] = period
