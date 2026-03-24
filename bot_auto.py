@@ -69,7 +69,7 @@ async def main():
                     print("⏭ Already sent this minute")
                     continue
 
-                await client.send_message(bot, "Get Prediction")
+                await client.send_message(bot, "🔮 Get Prediction")
                 print("📩 Sent (once)")
 
                 last_sent_minute[bot] = current_minute
